@@ -4,6 +4,17 @@ Notable changes to `eebus`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning is
 [semantic](https://semver.org/), with the usual pre-1.0 caveat that a minor bump may break.
 
+## [Unreleased]
+
+### Fixed
+
+- **An answered keep-alive ping no longer counts as silence.** `ShipConnection` consumes a
+  WebSocket pong inside its read loop and clears `awaiting_pong`, but the hub decided
+  liveness from its own `pinged_at`, which only a *message* cleared. A peer that answered
+  the ping but sent nothing else within `PONG_TIMEOUT` was dropped as unresponsive — two
+  `Hub`s with a quiet link between them parted every couple of minutes. The hub now takes
+  the pong as the answer it is.
+
 ## [0.10.0] — unreleased
 
 A node that announced itself and looked for peers found itself, and could connect to

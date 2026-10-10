@@ -2267,6 +2267,15 @@ impl Hub {
             let _ = link.connection.handle_timeout();
         }
 
+        // A pong is consumed inside the connection's read loop and never surfaces as a
+        // message, so the link learns about it here: an answered ping is liveness.
+        for link in &mut self.links {
+            if link.pinged_at.is_some() && !link.connection.awaiting_pong() {
+                link.pinged_at = None;
+                link.last_seen = now;
+            }
+        }
+
         // Connections that stopped answering, and connections that have gone quiet.
         let dead: Vec<usize> = self
             .links
