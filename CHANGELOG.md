@@ -13,7 +13,9 @@ Notable changes to `eebus`. The format follows
   liveness from its own `pinged_at`, which only a *message* cleared. A peer that answered
   the ping but sent nothing else within `PONG_TIMEOUT` was dropped as unresponsive — two
   `Hub`s with a quiet link between them parted every couple of minutes. The hub now takes
-  the pong as the answer it is.
+  the pong as the answer it is; the decision lives in a small sans-IO function with its own
+  tests. A ping whose send fails is no longer recorded as outstanding: the link is closed
+  as failed at once, rather than ten seconds later as unresponsive.
 
 ## [0.10.0] — unreleased
 
